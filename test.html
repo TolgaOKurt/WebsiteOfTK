@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Yazı Yazma Animasyonu</title>
+<style>
+  #yazi {
+    font-family: monospace;
+    font-size: 22px;
+    white-space: pre-line; /* \n karakterini yeni satır gibi işler */
+  }
+</style>
+</head>
+<body>
+
+<div id="yazi"></div>
+
+<script>
+  const yazi = `>How Website?.
+>Html,css,js.
+>hmm`;
+
+  const hedef = document.getElementById("yazi");
+  const satirlar = yazi.split("\n"); // yazıyı satırlara böl
+  let satirIndex = 0;
+  let harfIndex = 0;
+
+  function yazdir() {
+    if (satirIndex < satirlar.length) {
+      let satir = satirlar[satirIndex];
+      if (harfIndex < satir.length) {
+        hedef.textContent += satir[harfIndex];
+        harfIndex++;
+        setTimeout(yazdir, 50); // harfler arası hız
+      } else {
+        // satır bitti -> yeni satıra geç
+        hedef.textContent += "\n";
+        satirIndex++;
+        harfIndex = 0;
+        setTimeout(yazdir, 300); // satır bitince daha uzun bekle
+      }
+    }
+  }
+
+  yazdir();
+</script>
+
+</body>
+</html>
