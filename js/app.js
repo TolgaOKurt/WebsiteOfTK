@@ -1,10 +1,11 @@
 const SECTIONS = {
   anasayfa: `<h2>Merhaba — Ben Tolga</h2>
-            <p>CV , ilgi alanları, iletişim vs.
+            <p>CV , ilgi alanları, iletişim vs.</p>
+            <pre>
             <br>
             <br>
             <br>
-            <br>ŞUANDA YAPIM AŞAMASINDA</p>`,
+            <br>ŞUANDA YAPIM AŞAMASINDA<pre>`,
 
 
   matematik: `<h2>Matematik</h2>
@@ -20,7 +21,16 @@ const SECTIONS = {
   python: `<h2>Python</h2><p>zamazingo</p>`,
 
 
-  konu0: `<h2>Konu0</h2><p>İDK.</p>`,
+
+  
+  konu0: `<h2>Konu0</h2>
+          <p>İDK.</p>
+          <div id="yazi"></div>`
+          ,
+
+
+
+
 
 
   konu1: `<h2>Konu1</h2><p>idk2.</p>`,
@@ -48,6 +58,16 @@ function show(id){
   });
 }
 
+
+
+
+
+
+
+
+
+
+
 function handleHash(){
   const id = (location.hash || '#anasayfa').slice(1);
   show(id);
@@ -55,3 +75,10 @@ function handleHash(){
 
 window.addEventListener('DOMContentLoaded', handleHash);
 window.addEventListener('hashchange', handleHash);
+
+
+
+
+
+
+
