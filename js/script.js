@@ -1,45 +1,44 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Basit SPA davranışı: nav linklerine tıklanınca fetch ile içerik yükle, history.pushState kullan.
 (() => {
   const contentEl = document.getElementById('icerik');
-  const nav = document.getElementById('nav');
-  const links = Array.from(nav.querySelectorAll('a[data-link]'));
+  const navEl = document.getElementById('nav');
   const CACHE = new Map();
 
-const BASE_PATH = window.location.hostname.includes("github.io")
-  ? "/WebsiteOfTK"
-  : "";
-const DEFAULT_PAGE = `${BASE_PATH}/html/anasayfa.html`;
+  // BASE_PATH dinamiği: GH Pages /WebsiteOfTK, local /
+  const BASE_PATH = window.location.hostname.includes("github.io") ? "/WebsiteOfTK" : "";
 
+  // Sayfa linkleri ve başlıkları
+  const navLinks = [
+    { text: "Anasayfa", href: `${BASE_PATH}/html/anasayfa.html` },
+    { text: "Hakkımızda", href: `${BASE_PATH}/html/hakkimizda.html` },
+    { text: "İletişim", href: `${BASE_PATH}/html/iletisim.html` },
+  ];
 
-  // Yardımcı: linkleri active yap
+  // NAV linklerini DOM'a ekle
+  const links = navLinks.map(link => {
+    const a = document.createElement("a");
+    a.textContent = link.text;
+    a.href = link.href;
+    a.className = "link";
+    a.dataset.link = "";
+    navEl.appendChild(a);
+    return a;
+  });
+
+  // hangi dosya varsayılan
+  const DEFAULT_PAGE = `${BASE_PATH}/html/anasayfa.html`;
+
+  // active link ayarla
   function setActive(href) {
     links.forEach(a => {
-      const isActive = a.getAttribute('href') === href;
+      const isActive = a.href === href || a.getAttribute('href') === href;
       a.classList.toggle('active', isActive);
       if (isActive) a.setAttribute('aria-current', 'page');
       else a.removeAttribute('aria-current');
     });
   }
 
-  // İçerik yükleme
+  // içerik yükleme
   async function loadPage(href, { push = true } = {}) {
-    // temizleyip yükleme animasyonu
     contentEl.classList.remove('show');
     contentEl.classList.add('fade');
 
@@ -54,37 +53,32 @@ const DEFAULT_PAGE = `${BASE_PATH}/html/anasayfa.html`;
         CACHE.set(href, html);
       }
 
-      // içerik atama
       contentEl.innerHTML = html;
-      // başlık güncelle (eğer içerikte <title> yoksa fallback)
+
+      // başlık güncelle
       const temp = document.createElement('div');
       temp.innerHTML = html;
       const h2 = temp.querySelector('h2');
-      document.title = (h2 ? h2.textContent + ' — ' : '') + 'Tolga Kurt';
+      document.title = (h2 ? h2.textContent + ' — ' : '') + 'MiniSite';
 
-      // erişilebilirlik: main elementine odak ver
       contentEl.focus({ preventScroll: true });
-
-      // active link
       setActive(href);
 
-      // history
       if (push) {
         history.pushState({ href }, '', href);
       } else {
-        // replaceState ile sayfa doğrudan geldiğinde url'yi düzelt
         history.replaceState({ href }, '', href);
       }
 
-      // animasyonu tetikle (küçük gecikme ile)
+      // fade animasyonu
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           contentEl.classList.add('show');
         });
       });
 
-      // içerdeki dahili linkleri yakala (örn. içerik içinde başka html linkleri varsa)
       bindInternalLinks(contentEl);
+
     } catch (err) {
       console.error(err);
       contentEl.innerHTML = `
@@ -95,28 +89,35 @@ const DEFAULT_PAGE = `${BASE_PATH}/html/anasayfa.html`;
     }
   }
 
-  // içerik içindeki <a href="*.html"> linklerini yakala
- function bindInternalLinks(root) {
-  // sadece "html/" klasöründeki linkleri yakala
-  const anchors = Array.from(root.querySelectorAll('a[href$=".html"]'));
-
-  anchors.forEach(a => {
-    a.addEventListener('click', (e) => {
-      const url = a.getAttribute('href');
-      if (a.target === '_blank' || url.startsWith('http')) return;
-      e.preventDefault();
-      loadPage(url, { push: true });
+  // içerik içindeki dahili linkleri yakala
+  function bindInternalLinks(root) {
+    const anchors = Array.from(root.querySelectorAll('a[href$=".html"]'));
+    anchors.forEach(a => {
+      a.addEventListener('click', (e) => {
+        const url = a.href;
+        if (a.target === '_blank' || url.startsWith('http')) return;
+        e.preventDefault();
+        loadPage(url, { push: true });
+      });
     });
-  });
-}
-
+  }
 
   // nav linklerine event ekle
   links.forEach(a => {
     a.addEventListener('click', (e) => {
       e.preventDefault();
-      const href = a.getAttribute('href');
-      loadPage(href, { push: true });
+      loadPage(a.href, { push: true });
+    });
+
+    // fare hover ile önbelleğe alma
+    a.addEventListener('mouseover', () => {
+      const href = a.href;
+      if (!CACHE.has(href)) {
+        fetch(href)
+          .then(r => r.ok ? r.text() : Promise.reject())
+          .then(txt => CACHE.set(href, txt))
+          .catch(()=>{});
+      }
     });
   });
 
@@ -127,26 +128,9 @@ const DEFAULT_PAGE = `${BASE_PATH}/html/anasayfa.html`;
     loadPage(href, { push: false });
   });
 
-  // İlk yükleme: eğer URL doğrudan bir .html gösteriyorsa onu yükle, aksi halde DEFAULT_PAGE
-  const initialHref = (() => {
-    const path = location.pathname.split('/').pop() || '';
-    // Eğer doğrudan index.html açıldıysa ya da boş path varsa DEFAULT_PAGE
-    if (!path || path === 'index.html') return DEFAULT_PAGE;
-    return path;
-  })();
-
-  // Başlat
+  // ilk yükleme
   document.addEventListener('DOMContentLoaded', () => {
-    loadPage(initialHref, { push: false });
-
-    // Fare üstünde link önbellekleme (isteğe bağlı ama hız veriyor)
-    links.forEach(a => {
-      a.addEventListener('mouseover', () => {
-        const href = a.getAttribute('href');
-        if (!CACHE.has(href)) {
-          fetch(href).then(r => r.ok ? r.text() : Promise.reject()).then(txt => CACHE.set(href, txt)).catch(()=>{});
-        }
-      });
-    });
+    loadPage(DEFAULT_PAGE, { push: false });
   });
+
 })();
