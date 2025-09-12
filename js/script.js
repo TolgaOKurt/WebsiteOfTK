@@ -3,7 +3,10 @@
 
 
   // BASE_PATH dinamiği: Live Server veya GH Pages uyumlu
-  const BASE_PATH = window.location.hostname.includes("github.io") ? "/WebsiteOfTK" : "";
+  const BASE_PATH = window.location.hostname.includes("github.io") 
+                  ? "https://raw.githubusercontent.com/TolgaOKurt/WebsiteOfTK/main/images" 
+                  : "images"; // local
+
 
   const contentEl = document.getElementById('icerik');
   const navEl = document.getElementById('nav');
@@ -68,7 +71,8 @@
 
       // görselleri BASE_PATH ile ayarlama
       contentEl.querySelectorAll('img[data-src]').forEach(img => {
-        img.src = BASE_PATH + "/" + img.dataset.src; // mutlak path
+        const filename = img.dataset.src.split('/').pop(); // sadece dosya adı
+        img.src = `${BASE_PATH}/${filename}`;
       });
 
 
