@@ -1,34 +1,29 @@
 <!doctype html>
 <html lang="tr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Tolga — Kişisel Site</title>
-<link rel="stylesheet" href="css/styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Örnek Site — Anasayfa</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <div class="wrap">
+  <div class="wrap" id="app">
     <header>
-      <h1>Tolga Kurt</h1>
-      <p>Matematikçi / Ai ile yapılmış bir site / Tanıtım</p>
+      <h1>MiniSite</h1>
+      <p>Sabitlemiş navigasyon, dinamik içerik yükleme — hafif ve şık.</p>
     </header>
 
-    <main id="icerik" aria-live="polite">
-      <!-- JS burayı dolduracak -->
+    <main id="icerik" aria-live="polite" tabindex="-1" class="fade">
+      <!-- Buraya JS ile anasayfa.html yüklenecek -->
     </main>
 
-    <nav id="nav" aria-label="Uğraşlar">
-      <a class="link" href="#anasayfa" data-id="anasayfa">Ana Sayfa</a>
-      <a class="link" href="#matematik" data-id="matematik">Matematik</a>
-      <a class="link" href="#c" data-id="c">C Programlama</a>
-      <a class="link" href="#python" data-id="python">Python</a>
-      <a class="link" href="#fotograf" data-id="fotograf">Fotoğraf</a>
-      <a class="link" href="#konu0" data-id="konu0">konu0</a>
-      <a class="link" href="#konu1" data-id="konu1">konu1</a>
-      <a class="link" href="#konu2" data-id="konu2">konu2</a>
+    <nav id="nav" aria-label="Site navigasyonu">
+      <a href="html/anasayfa.html" class="link" data-link>Anasayfa</a>
+      <a href="html/hakkimizda.html" class="link" data-link>Hakkımızda</a>
+      <a href="html/iletisim.html" class="link" data-link>İletişim</a>
     </nav>
   </div>
 
-<script src="js/app.js"></script>
+  <script src="js/script.js" defer></script>
 </body>
 </html>
