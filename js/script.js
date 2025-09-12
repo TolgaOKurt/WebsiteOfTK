@@ -6,7 +6,7 @@
   const CACHE = new Map();
 
   // Hangi dosya varsayılan:
-  const DEFAULT_PAGE = 'html/anasayfa.html';
+  const DEFAULT_PAGE = '/WebsiteOfTK/html/anasayfa.html';
 
   // Yardımcı: linkleri active yap
   function setActive(href) {
@@ -79,7 +79,8 @@
   // içerik içindeki <a href="*.html"> linklerini yakala
  function bindInternalLinks(root) {
   // sadece "html/" klasöründeki linkleri yakala
-  const anchors = Array.from(root.querySelectorAll('a[href^="html/*.html"]'));
+  const anchors = Array.from(root.querySelectorAll('a[href$=".html"]'));
+
   anchors.forEach(a => {
     a.addEventListener('click', (e) => {
       const url = a.getAttribute('href');
