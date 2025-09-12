@@ -6,7 +6,8 @@
   const CACHE = new Map();
 
   // Hangi dosya varsayılan:
-  const DEFAULT_PAGE = '/WebsiteOfTK/html/anasayfa.html';
+  const DEFAULT_PAGE = 'html/anasayfa.html';
+
 
   // Yardımcı: linkleri active yap
   function setActive(href) {
