@@ -1,9 +1,14 @@
 (() => {
+
+
+
+  // BASE_PATH dinamiği: Live Server veya GH Pages uyumlu
+  const BASE_PATH = window.location.hostname.includes("github.io") ? "/WebsiteOfTK" : "";
+
   const contentEl = document.getElementById('icerik');
   const navEl = document.getElementById('nav');
   const CACHE = new Map();
 
-  const BASE_PATH = ""; // GitHub Pages için base path gerekirse "/WebsiteOfTK" yapabilirsiniz
 
 
 
@@ -63,8 +68,9 @@
 
       // görselleri BASE_PATH ile ayarlama
       contentEl.querySelectorAll('img[data-src]').forEach(img => {
-        img.src = BASE_PATH + "/" + img.dataset.src;
+        img.src = BASE_PATH + "/" + img.dataset.src; // mutlak path
       });
+
 
       const temp = document.createElement('div');
       temp.innerHTML = html;
@@ -85,7 +91,7 @@
 
 
 
-  
+
   // hash değiştiğinde sayfa yükle
   window.addEventListener('hashchange', () => {
     const name = location.hash.replace('#','');
