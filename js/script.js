@@ -16,10 +16,25 @@
 
 
 
+// sayfa tanımları SAYFA EKLEDİKÇE BURAYI DA GÜNCELLE
 
   const pages = [
     { name: "anasayfa", text: "Anasayfa", file: "html/anasayfa.html" },
-    { name: "hakkimizda", text: "Hakkımızda", file: "html/hakkimizda.html" },
+
+
+    
+    { name: "Konu1", text: "Konu1", file: "html/hakkimizda.html" },
+
+
+
+
+
+
+
+
+
+
+
     { name: "iletisim", text: "İletişim", file: "html/iletisim.html" }
   ];
 
@@ -41,6 +56,7 @@
     return { el: a, page: p };
   });
 
+// aktif linki ayarla
   function setActive(name) {
     links.forEach(({ el, page }) => {
       const active = page.name === name;
@@ -49,6 +65,9 @@
       else el.removeAttribute('aria-current');
     });
   }
+
+
+  // sayfa yükleme fonksiyonu
 
   async function loadPage(name) {
     const page = pages.find(p => p.name === name) || pages[0];
@@ -86,7 +105,7 @@
       requestAnimationFrame(() => requestAnimationFrame(() => contentEl.classList.add('show')));
     } catch(err) {
       console.error(err);
-      contentEl.innerHTML = `<h2>Bir şeyler ters gitti</h2><p>Hata: ${err.message}</p>`;
+      contentEl.innerHTML = `<h2> HAYDEEEE NOLDU YAV </h2><p>Hata: ${err.message}</p>`;
       setActive(null);
     }
   }
