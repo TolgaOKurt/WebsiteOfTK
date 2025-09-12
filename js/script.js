@@ -1,3 +1,19 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Basit SPA davranışı: nav linklerine tıklanınca fetch ile içerik yükle, history.pushState kullan.
 (() => {
   const contentEl = document.getElementById('icerik');
@@ -5,8 +21,10 @@
   const links = Array.from(nav.querySelectorAll('a[data-link]'));
   const CACHE = new Map();
 
-  // Hangi dosya varsayılan:
-  const DEFAULT_PAGE = 'html/anasayfa.html';
+const BASE_PATH = window.location.hostname.includes("github.io")
+  ? "/WebsiteOfTK"
+  : "";
+const DEFAULT_PAGE = `${BASE_PATH}/html/anasayfa.html`;
 
 
   // Yardımcı: linkleri active yap
