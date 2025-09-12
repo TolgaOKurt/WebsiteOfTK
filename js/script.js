@@ -42,7 +42,7 @@
       const temp = document.createElement('div');
       temp.innerHTML = html;
       const h2 = temp.querySelector('h2');
-      document.title = (h2 ? h2.textContent + ' — ' : '') + 'MiniSite';
+      document.title = (h2 ? h2.textContent + ' — ' : '') + 'Tolga Kurt';
 
       // erişilebilirlik: main elementine odak ver
       contentEl.focus({ preventScroll: true });
