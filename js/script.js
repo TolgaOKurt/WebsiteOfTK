@@ -3,8 +3,8 @@
 
 
   // BASE_PATH dinamiği: Live Server veya GH Pages uyumlu
-  const BASE_PATH = window.location.hostname.includes("github.io") 
-                  ? "https://raw.githubusercontent.com/TolgaOKurt/WebsiteOfTK/main/images" 
+  const BASE_PATH = window.location.hostname.includes("github.io")
+                  ? "https://raw.githubusercontent.com/TolgaOKurt/WebsiteOfTK/main/images"
                   : "images"; // local
 
 
@@ -20,7 +20,6 @@
 
   const pages = [
     { name: "anasayfa", text: "Anasayfa", file: "html/anasayfa.html" },
-
 
 
     { name: "Konu1", text: "Konu1", file: "html/Konu1.html" },
