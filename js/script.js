@@ -22,9 +22,9 @@
     { name: "anasayfa", text: "Anasayfa", file: "html/anasayfa.html" },
 
 
-    
-    { name: "Konu1", text: "Konu1", file: "html/hakkimizda.html" },
 
+    { name: "Konu1", text: "Konu1", file: "html/Konu1.html" },
+    { name: "Konu2", text: "Konu2", file: "html/Konu2.html" },
 
 
 
@@ -76,6 +76,9 @@
     contentEl.classList.remove('show');
     contentEl.classList.add('fade');
 
+
+
+
     try {
       let html;
       if(CACHE.has(page.file)) html = CACHE.get(page.file);
@@ -105,7 +108,7 @@
       requestAnimationFrame(() => requestAnimationFrame(() => contentEl.classList.add('show')));
     } catch(err) {
       console.error(err);
-      contentEl.innerHTML = `<h2> HAYDEEEE NOLDU YAV </h2><p>Hata: ${err.message}</p>`;
+      contentEl.innerHTML = `<h2> 404 bulunamadı :( </h2><p>Hata: ${err.message}</p>`;
       setActive(null);
     }
   }
@@ -134,4 +137,7 @@
     const name = location.hash.replace('#','') || "anasayfa";
     loadPage(name);
   });
+
+
+
 })();
