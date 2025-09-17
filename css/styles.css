@@ -166,7 +166,7 @@ nav#nav {
   padding-top:6px;
 }
 nav .link{
-  display:block;
+  display: block;
   text-decoration:none;
   color:var(--text);
   margin:10px 0;
@@ -205,6 +205,6 @@ nav .link:focus-visible{
 /* responsive */
 @media (max-width:880px){
   .wrap{ grid-template-columns:1fr; padding:18px; }
-  nav#nav{ order:2; padding-top:18px; display:flex; gap:12px; flex-wrap:wrap; }
+  nav#nav{ order:-1; padding-top:18px; display:flex; gap:12px; flex-wrap:wrap; }
   nav .link{ margin:0; font-size:14px; }
 }

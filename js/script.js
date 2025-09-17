@@ -21,9 +21,9 @@
   const pages = [
     { name: "anasayfa", text: "Anasayfa", file: "html/anasayfa.html" },
 
+    { name: "RMBiVD", text: "RMBiVD", file: "html/RMBiVD.html" },
+    { name: "Konu2", text: "a subtraction variation of PSP", file: "html/Konu2.html" },
 
-    { name: "Konu1", text: "Konu1", file: "html/Konu1.html" },
-    { name: "Konu2", text: "Konu2", file: "html/Konu2.html" },
 
 
 
