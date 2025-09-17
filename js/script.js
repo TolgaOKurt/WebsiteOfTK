@@ -22,7 +22,7 @@
     { name: "anasayfa", text: "Anasayfa", file: "html/anasayfa.html" },
 
     { name: "RMBiVD", text: "RMBiVD", file: "html/RMBiVD.html" },
-    { name: "Konu2", text: "a subtraction variation of PSP", file: "html/Konu2.html" },
+    { name: "PSPp", text: "PSP+", file: "html/Pspp.html" },
 
 
 

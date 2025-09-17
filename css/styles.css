@@ -203,7 +203,7 @@ nav .link:focus-visible{
 }
 
 /* responsive */
-@media (max-width:880px){
+@media (max-width:950px){
   .wrap{ grid-template-columns:1fr; padding:18px; }
   nav#nav{ order:-1; padding-top:18px; display:flex; gap:12px; flex-wrap:wrap; }
   nav .link{ margin:0; font-size:14px; }
