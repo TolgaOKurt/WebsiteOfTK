@@ -23,8 +23,11 @@
 
     { name: "RMBiVD", text: "RMBiVD", file: "html/RMBiVD.html" },
     { name: "PSPp", text: "PSP+", file: "html/Pspp.html" },
-
-
+    { name: "Agac", text: "Ağaç", file: "html/Agac.html" },
+    { name: "USD", text: "USD", file: "html/UcgenSayDong.html" },
+    { name: "SSMT", text: "SSMT", file: "html/SSMT.html" },
+    { name: "MH", text: "MontyHall", file: "html/MontyHall.html" },
+    { name: "FT", text: "FormulTahmin", file: "html/FormTahm.html" },
 
 
 
