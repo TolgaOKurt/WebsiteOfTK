@@ -22,12 +22,12 @@
     { name: "anasayfa", text: "Anasayfa", file: "html/anasayfa.html", icon: "images/tk_16x16.png" },
 
     { name: "RMBiVD", text: "RMBiVD", file: "html/RMBiVD.html", icon: "images/mavitop_16x16.png" },
-    { name: "PSPp", text: "PSP+", file: "html/Pspp.html" },
-    { name: "Agac", text: "Ağaç", file: "html/Agac.html" },
-    { name: "USD", text: "USD", file: "html/UcgenSayDong.html" },
-    { name: "SSMT", text: "SSMT", file: "html/SSMT.html" },
-    { name: "MH", text: "MontyHall", file: "html/MontyHall.html" },
-    { name: "FT", text: "FormulTahmin", file: "html/FormTahm.html" },
+    { name: "PSPp", text: "PSP+", file: "html/Pspp.html", icon: "images/pulumsu_16x16.png" },
+    { name: "Agac", text: "Ağaç", file: "html/Agac.html", icon: "images/agacimsi_16x16.png" },
+    { name: "USD", text: "USD", file: "html/UcgenSayDong.html", icon: "images/cizgiler_16x16.png" },
+    { name: "SSMT", text: "SSMT", file: "html/SSMT.html", icon: "images/tank_16x16.png" },
+    { name: "MH", text: "MontyHall", file: "html/MontyHall.html", icon: "images/kapı_16x16.png" },
+    { name: "FT", text: "FormulTahmin", file: "html/FormTahm.html", icon: "images/253_16x16.png" },
 
 
 
@@ -37,7 +37,7 @@
 
 
 
-    { name: "iletisim", text: "İletişim", file: "html/iletisim.html" }
+    { name: "iletisim", text: "İletişim", file: "html/iletisim.html", icon: "images/hi_16x16.png" }
   ];
 
 
