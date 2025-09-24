@@ -19,9 +19,9 @@
 // sayfa tanımları SAYFA EKLEDİKÇE BURAYI DA GÜNCELLE
 
   const pages = [
-    { name: "anasayfa", text: "Anasayfa", file: "html/anasayfa.html" },
+    { name: "anasayfa", text: "Anasayfa", file: "html/anasayfa.html", icon: "images/tk_16x16.png" },
 
-    { name: "RMBiVD", text: "RMBiVD", file: "html/RMBiVD.html" },
+    { name: "RMBiVD", text: "RMBiVD", file: "html/RMBiVD.html", icon: "images/mavitop_16x16.png" },
     { name: "PSPp", text: "PSP+", file: "html/Pspp.html" },
     { name: "Agac", text: "Ağaç", file: "html/Agac.html" },
     { name: "USD", text: "USD", file: "html/UcgenSayDong.html" },
@@ -54,6 +54,16 @@
     a.textContent = p.text;
     a.href = `#${p.name}`;
     a.className = "link";
+
+
+
+
+
+    if (p.icon) {a.innerHTML = ` ${p.text}<img src="${p.icon}" alt="${p.text}" style="width:16px; height:16px; vertical-align:middle; margin-right:5px;">`;}
+
+
+
+
     navEl.appendChild(a);
     return { el: a, page: p };
   });
