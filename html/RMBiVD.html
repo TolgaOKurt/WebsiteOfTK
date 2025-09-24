@@ -7,7 +7,7 @@ Evren neden 3 boyutlu?<br>
 Bu sorunun cevabını bilmem ama kodlayabilirim.<br>
 
 Kütleler dağılma trendi göstermezlerse her zaman tekrar başlangıçta buluşurlar.<br>
-Kütleler çok hızlı dağılırsa o zamanda üstünde durabilceğimiz bir zemin olamaz.<br>
+Kütleler çok hızlı dağılırsa o zamanda üstünde durabileceğimiz bir zemin olamaz.<br>
 Farklı boyutlarda kütlelerin rastgele haraketler göstererek ilerlediği bir durumda dağılma ve buluşma oranlarını inceleyelim.
 
 </p>
@@ -45,9 +45,9 @@ OK=(  0.13) OU=15.816392 TBMGS=28.8380 EA1KGO=0.9840
 <h2>İki Boyutlu Ortamda <span class="hint" title="Psudo">Rastgele</span> Hareket Eden Toplar</h2>
 <p>
 Konuyla ilgili olarak yaptığım  <a href="https://github.com/TolgaOKurt/Ugraslar/blob/main/RMBiVD/Randomly%20Moving%20Balls%20in%20Various%20Dimensions_250827_151332.pdf" target="_blank">karalamalarda</a> da
-gösterdiğim üzere toplar 2 boyutlu bir ortamda 2 eksenin değişik oranlarla karışılmasıyla bulunan sınırsız yönden birine doğru 1 birim ilerleyecekler.<br>
-(0,0) noktasından x<sup>2</sup>+y<sup>2</sup>=1 denklemi ile oluşturulmuş dairenin üzerindeki rastgele bir noktaya çizilen vektör topumuzun hareketini belirtecektir. <br>
-Mevcut konumu ile vektörü toplayacak ve yeni konumunu bulacaktır.<br>
+gösterdiğim üzere toplar 2 boyutlu bir ortamda 2 eksenin değişik oranlarla karıştırılmasıyla bulunan sınırsız yönden birine doğru 1 birim ilerleyeceklerdir.<br>
+(0,0) noktasından x<sup>2</sup>+y<sup>2</sup>=1 denklemi ile oluşturulmuş dairenin üzerindeki rastgele bir noktaya çizilen vektör topumuzun hareketini belirleyecektir. <br>
+Mevcut konumu ile vektörü toplayarak yeni konumunu hesaplayacaktır.<br>
 x<sup>2</sup>+y<sup>2</sup>=1 iken x için -1 ile +1 arasında rastgele bir sayı belirlenecek ve y ise vektorun boyutunu 1 yapan sayıya mutlak olarak eşit olacaktır.<br>
 kısaca y=±√(1-x<sup>2</sup>) ile y değeri belirlenecektir.<br>
 Şimdi bir kaç kere çalıştırıp sonuçlara bakalım.<br>
@@ -65,7 +65,9 @@ OK=(  0.50, -0.10) OU=23.483948 TBMGS=1.7450 EA1KGO=0.6490
 <p>
 Eşitlik x<sup>2</sup>+y<sup>2</sup>+z<sup>2</sup>=1 olur. y=±√(1-x<sup>2</sup>) ve z=±√(1-x<sup>2</sup>-y<sup>2</sup>)<br>
 sonuçlara bakalım.<br>
+Bilmediğim bir sebepten, bugtan, dolayı 3+ boyutlarda top miktarı çok artınca 3+ boyutların konum <strong>toplamları ile yapılan işlemler</strong>bozuluyor ancak tekil olarak incelediğimde konumlar doğru bir şekilde çalışıyor.<br>
 topmiktari=1000,maxtur=1000 iken</p>
+
 <pre>
 OK=( -0.46,  0.37, ?) OU=? TBMGS=0.2750 EA1KGO=0.2070
 OK=( -0.23, -0.39, ?) OU=? TBMGS=0.2820 EA1KGO=0.2170
@@ -89,11 +91,15 @@ TBMGS'de azalma, EA1KGO'de azalma gözüküyor.
 </p>
 <h2>Sonuçlar</h2>
 <p>Bir boyutlu ortamda EA1KGO %100'e yakın, iki boyutlu ortamda EA1KGO %60-65 civarında, üç boyutlu ortamda %25-30 civarında, dört boyutlu ortamda EA1KGO %5-%10 civarında.<br>
-Bir boyutlu ortamda maddelerin uzaklaşıp yeni kümeler oluşturması olabiliritesi düşük bir durum gibi gözüküyor.<br>
-İki boyutlu ortamda maddeler uzaklaşabiliyor ama yüksek oranda geri dönüyorlar bu da yine merkezde yığılma yapar ve kütle çekimini de düşünürsek bu evrenin oluşumu için bayağı kötü bir durum olabilir<br>
+Bir boyutlu ortamda maddelerin uzaklaşıp yeni kümeler oluşturması, olabiliritesi düşük bir durum gibi gözüküyor.<br>
+İki boyutlu ortamda maddeler uzaklaşabiliyor ama yüksek oranda geri dönüş yapıyorlar bu da yine merkezde yığılma yapar ve kütle çekimini de düşünürsek bu evrenin oluşumu için bayağı kötü bir durum olabilir.<br>
 Üç Boyutlu ortamda çoğu madde merkeze dönmüyor ama dönen kitle de çeyrekten fazla.<br>
 Dört boyutlu ortamda maddelerin çok azı merkeze dönüyor yani çok hızlı bir şekilde dağılıyorlar.<br>
 Belki bu toplar bize neden evrenimizin maddelerin ne çok hızlı dağıldığı ne de nerdeyse hiç dağılmadığı boyutlar yerine 3 boyutlu bir sistemde olduğunu anlatıyordur. Belki de ben uyduruyorum. Bilemem.<br>
+</p>
+
+<h2>Yapılabilecekler</h2>
+<p>3+ Boyut hatası fixlenmeli. Çekim eklenebilir. Kodun hata paylarını değiştirilebilir. Konuyla ilgili literatür referans edilebilir.
 </p>
 
 
