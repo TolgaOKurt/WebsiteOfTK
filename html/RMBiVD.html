@@ -40,6 +40,8 @@ OK=(  0.00) OU=15.826238 TBMGS=28.6480 EA1KGO=0.9820
 OK=( -0.08) OU=14.633598 TBMGS=32.4570 EA1KGO=0.9790
 OK=(  0.03) OU=14.569494 TBMGS=32.1000 EA1KGO=0.9870
 OK=(  0.13) OU=15.816392 TBMGS=28.8380 EA1KGO=0.9840
+OK=(  0.13) OU=15.776612 TBMGS=28.6840 EA1KGO=0.9890
+OK=( -0.00) OU=14.609368 TBMGS=32.1770 EA1KGO=0.9850
     </pre>
 
 <h2>İki Boyutlu Ortamda <span class="hint" title="Psudo">Rastgele</span> Hareket Eden Toplar</h2>
@@ -57,6 +59,8 @@ OK=( -0.30, -0.22) OU=23.280453 TBMGS=1.6800 EA1KGO=0.6280
 OK=( -0.39,  0.26) OU=23.568602 TBMGS=1.5570 EA1KGO=0.6170
 OK=( -0.10,  0.03) OU=23.594709 TBMGS=1.7500 EA1KGO=0.6400
 OK=(  0.50, -0.10) OU=23.483948 TBMGS=1.7450 EA1KGO=0.6490
+OK=( -0.13,  0.01) OU=23.716759 TBMGS=1.6660 EA1KGO=0.6510
+OK=(  0.79, -0.01) OU=23.188053 TBMGS=1.7420 EA1KGO=0.6540
 </pre>
 <p>TBMGS'de azalma, EA1KGO'de azalma görülüyor. </p>
 
@@ -65,14 +69,15 @@ OK=(  0.50, -0.10) OU=23.483948 TBMGS=1.7450 EA1KGO=0.6490
 <p>
 Eşitlik x<sup>2</sup>+y<sup>2</sup>+z<sup>2</sup>=1 olur. y=±√(1-x<sup>2</sup>) ve z=±√(1-x<sup>2</sup>-y<sup>2</sup>)<br>
 sonuçlara bakalım.<br>
-Bilmediğim bir sebepten, bugtan, dolayı 3+ boyutlarda top miktarı çok artınca 3+ boyutların konum <strong>toplamları ile yapılan işlemler</strong> bozuluyor ancak tekil olarak incelediğimde konumlar doğru bir şekilde çalışıyor.<br>
 topmiktari=1000,maxtur=1000 iken</p>
 
 <pre>
-OK=( -0.46,  0.37, ?) OU=? TBMGS=0.2750 EA1KGO=0.2070
-OK=( -0.23, -0.39, ?) OU=? TBMGS=0.2820 EA1KGO=0.2170
-OK=(  0.40,  0.31, ?) OU=? TBMGS=0.2970 EA1KGO=0.2240
-OK=( -0.54, -0.28, ?) OU=? TBMGS=0.2570 EA1KGO=0.2100
+OK=( -0.29, -0.76,  0.07) OU=29.193169 TBMGS=0.2740 EA1KGO=0.2080
+OK=( -0.08, -0.12,  0.16) OU=28.639450 TBMGS=0.2360 EA1KGO=0.1980
+OK=( -0.18, -0.08, -0.12) OU=29.137150 TBMGS=0.2550 EA1KGO=0.2070
+OK=(  0.36,  0.01,  0.21) OU=28.906879 TBMGS=0.2390 EA1KGO=0.1920
+OK=(  0.16, -0.03,  0.20) OU=28.968803 TBMGS=0.2610 EA1KGO=0.1900
+OK=( -0.15, -0.11,  0.13) OU=29.130766 TBMGS=0.2580 EA1KGO=0.2050
 </pre>
 <p>
 TBMGS'de azalma, EA1KGO'de azalma gözüküyor.
@@ -80,15 +85,33 @@ TBMGS'de azalma, EA1KGO'de azalma gözüküyor.
 <h3>4D</h3>
 <p>topmiktari=1000,maxtur=1000 iken</p>
 <pre>
-OK=(  0.41,  0.21, ?, ?) OU=? TBMGS=0.0840 EA1KGO=0.0840
-OK=( -0.12, -0.29, ?, ?) OU=? TBMGS=0.0920 EA1KGO=0.0870
-OK=( -0.17, -0.51, ?, ?) OU=? TBMGS=0.0710 EA1KGO=0.0680
-OK=(  0.62,  0.16, ?, ?) OU=? TBMGS=0.0580 EA1KGO=0.0570
+OK=( -0.19, -0.18, -0.28,  0.19) OU=33.182976 TBMGS=0.0670 EA1KGO=0.0600
+OK=(  0.10,  0.13,  0.11,  0.33) OU=33.168781 TBMGS=0.0660 EA1KGO=0.0600
+OK=( -0.24, -0.01, -0.29, -0.26) OU=33.437626 TBMGS=0.0790 EA1KGO=0.0730
+OK=( -0.24,  0.15,  0.51,  0.16) OU=33.346527 TBMGS=0.0750 EA1KGO=0.0710
+OK=( -0.16, -0.29, -0.44,  0.29) OU=33.043488 TBMGS=0.0700 EA1KGO=0.0660
+OK=(  0.01,  0.04,  0.10, -0.20) OU=32.803490 TBMGS=0.0680 EA1KGO=0.0650
 
 </pre>
 <p>
 TBMGS'de azalma, EA1KGO'de azalma gözüküyor.
 </p>
+<h3>5D</h3>
+<p>topmiktari=1000,maxtur=1000 iken</p>
+<pre>
+OK=(  0.41,  0.17, -0.18,  0.04,  0.06) OU=36.768677 TBMGS=0.0260 EA1KGO=0.0260
+OK=( -0.10,  0.04, -0.55, -0.10,  0.03) OU=37.454967 TBMGS=0.0350 EA1KGO=0.0340
+OK=( -0.09,  0.09,  0.04,  0.15,  0.30) OU=36.443272 TBMGS=0.0310 EA1KGO=0.0310
+OK=(  0.53, -0.29,  0.22, -0.20,  0.05) OU=36.907520 TBMGS=0.0270 EA1KGO=0.0260
+OK=( -0.06, -0.06, -0.22,  0.25,  0.10) OU=36.586231 TBMGS=0.0240 EA1KGO=0.0240
+OK=( -0.84,  0.01,  0.30,  0.23,  0.04) OU=36.322121 TBMGS=0.0320 EA1KGO=0.0320
+</pre>
+<h3>6D</h3>
+<p>topmiktari=1000,maxtur=1000 iken</p>
+<pre>
+OK=( -0.18,  0.29,  0.03,  0.28, -0.11,  0.01) OU=39.537910 TBMGS=0.0270 EA1KGO=0.0260
+</pre>
+
 <h2>Sonuçlar</h2>
 <p>Bir boyutlu ortamda EA1KGO %100'e yakın, iki boyutlu ortamda EA1KGO %60-65 civarında, üç boyutlu ortamda %20-25 civarında, dört boyutlu ortamda EA1KGO %5-%10 civarında.<br>
 Bir boyutlu ortamda maddelerin uzaklaşıp yeni kümeler oluşturması, olabiliritesi düşük bir durum gibi gözüküyor.<br>
