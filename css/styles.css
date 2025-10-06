@@ -8,6 +8,15 @@
   --maxwidth:1400px;
   --headercolor: rgb(120, 30, 60);
 }
+/* Dark tema değişkenleri */
+[data-theme="dark"]{
+  --bg: rgb(59, 59, 59);
+  --text: rgb(232, 232, 232);
+  --muted: rgb(160, 160, 160);
+  --maroon: rgb(255, 170, 170);
+  --orange:  rgb(255, 183, 77);
+  --headercolor: rgb(255, 200, 200);
+}
 *{box-sizing:border-box}
 body {
   font-family: Tahoma, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -36,6 +45,19 @@ header{
   grid-column:1 / -1;
   margin-bottom:8px;
 }
+
+/* Tema toggle butonu */
+.theme-toggle{
+  margin-left: 12px;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--muted);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+.theme-toggle:hover{ border-color: var(--orange); }
 
 
 
@@ -181,6 +203,23 @@ nav .link.active{ color:var(--maroon); text-decoration:underline; text-underline
 nav .link:focus-visible{
   outline:2px dashed var(--orange);
   outline-offset:4px;
+}
+
+/* Nav ikon stili */
+img.nav-icon{
+  width:16px;
+  height:16px;
+  vertical-align:middle;
+  margin-left:5px;
+}
+
+/* Erişilebilirlik için ekran okuyucuya özel sınıf */
+.visually-hidden{
+  position:absolute !important;
+  width:1px; height:1px;
+  padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0);
+  white-space:nowrap; border:0;
 }
 
 
