@@ -7,6 +7,8 @@
   "nav_anasayfa": "Anasayfa",
   "nav_iletisim": "İletişim",
   "nav_RMBiVD": "RMBiVD",
+  "ai_note": "AI tarafından çevrildi",
+  "hint_suffix": "yani?",
   "theme_dark": "🌙 Koyu",
   "theme_light": "☀️ Açık",
   "home_title": "Anasayfa",
@@ -107,7 +109,7 @@
   "rmbivd_todo_li1": "Basit çekim modeli ekle (merkeze doğru ivme).",
   "rmbivd_todo_li2": "Parametreleri (adım sayısı, örneklem büyüklüğü) yeniden ayarla ve kıyasla.",
   "rmbivd_todo_li3": "Konuyla ilgili literatür referanslarını ekle.",
-  "rmbivd_lying_me_alt": "Uzanan ben",
-  "rmbivd_lying_me_caption": "Uzanan ben",
-  "rmbivd_lying_me_download_label": "Uzanan ben görselini indir"
+  "rmbivd_reaching_me_alt": "Uzanan ben",
+  "rmbivd_reaching_me_caption": "Uzanan ben",
+  "rmbivd_reaching_me_download_label": "Uzanan ben görselini indir"
 }

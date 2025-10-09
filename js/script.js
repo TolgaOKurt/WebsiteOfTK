@@ -22,19 +22,25 @@
   ];
 
   async function loadLanguage(lang) {
-    if (translations[lang]) return;
+    if (translations[lang]) return true;
     try {
       const res = await fetch(`lang/${lang}.json`);
       if (!res.ok) throw new Error(`Language file for ${lang} not found`);
       translations[lang] = await res.json();
+      return true;
     } catch (err) {
       console.error(err);
       if (lang !== 'tr') await loadLanguage('tr');
+      return false;
     }
   }
 
   function getTranslation(key, lang = currentLang) {
-    return translations[lang]?.[key] || key;
+    // Try current language, then English, then Turkish, then key
+    return (translations[lang] && translations[lang][key])
+      || (translations['en'] && translations['en'][key])
+      || (translations['tr'] && translations['tr'][key])
+      || key;
   }
 
   function applyTranslations(scope = document) {
@@ -68,17 +74,61 @@
       themeBtn.textContent = getTranslation(theme === 'dark' ? 'theme_dark' : 'theme_light');
     }
 
-    const langBtn = document.getElementById('lang-toggle');
-    if (langBtn) {
-        langBtn.textContent = currentLang === 'tr' ? 'EN' : 'TR';
+    // Update language dropdown active state and trigger label
+    const flagSrc = {
+      tr: 'images/flags/4x3/tr.svg',
+      en: 'images/flags/4x3/gb.svg',
+      ja: 'images/flags/4x3/jp.svg',
+      zh: 'images/flags/4x3/cn.svg',
+      es: 'images/flags/4x3/es.svg',
+      it: 'images/flags/4x3/it.svg',
+      fr: 'images/flags/4x3/fr.svg',
+      de: 'images/flags/4x3/de.svg',
+      ru: 'images/flags/4x3/ru.svg',
+      el: 'images/flags/4x3/gr.svg'
+    };
+    const trigger = document.getElementById('lang-trigger');
+    if (trigger) {
+      trigger.textContent = '';
+      const img = document.createElement('img');
+      img.src = flagSrc[currentLang] || '';
+      img.alt = '';
+      img.className = 'flag-icon';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      trigger.appendChild(img);
+    }
+    const menu = document.getElementById('lang-menu');
+    if (menu) {
+      menu.querySelectorAll('button[data-lang]').forEach(btn => {
+        const isActive = btn.getAttribute('data-lang') === currentLang;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-current', isActive ? 'true' : 'false');
+      });
+    }
+
+    // Show a tiny note next to the language button when non-TR is active
+    const aiNote = document.getElementById('ai-translation-note');
+    if (aiNote) {
+      if (currentLang !== 'tr') {
+        aiNote.textContent = getTranslation('ai_note');
+        aiNote.style.display = '';
+      } else {
+        aiNote.textContent = '';
+        aiNote.style.display = 'none';
+      }
     }
   }
 
   async function setLanguage(lang) {
-    await loadLanguage(lang);
-    currentLang = lang;
-    localStorage.setItem('lang', lang);
-    document.documentElement.lang = lang;
+    const ok = await loadLanguage(lang);
+    if (!ok && lang !== 'tr') {
+      // keep current language if requested one is unavailable yet
+      return;
+    }
+    currentLang = ok ? lang : 'tr';
+    localStorage.setItem('lang', currentLang);
+    document.documentElement.lang = currentLang;
     applyTranslations(document);
     const name = location.hash.replace('#', '') || "anasayfa";
     await loadPage(name);
@@ -87,18 +137,105 @@
   function initLangToggle() {
     const header = document.querySelector('header');
     if (!header) return;
-    let btn = document.getElementById('lang-toggle');
-    if (!btn) {
-      btn = document.createElement('button');
-      btn.id = 'lang-toggle';
-      btn.type = 'button';
-      btn.className = 'lang-toggle';
-      header.appendChild(btn);
+    // Remove old group if exists
+    const oldGroup = document.getElementById('lang-toggle-group');
+    if (oldGroup) oldGroup.remove();
+
+    // Create dropdown container
+    let dd = document.getElementById('lang-dropdown');
+    if (!dd) {
+      dd = document.createElement('div');
+      dd.id = 'lang-dropdown';
+      dd.className = 'lang-dropdown';
+      header.appendChild(dd);
+
+      const trigger = document.createElement('button');
+      trigger.id = 'lang-trigger';
+      trigger.type = 'button';
+      trigger.className = 'lang-trigger';
+      trigger.setAttribute('aria-haspopup', 'true');
+      trigger.setAttribute('aria-expanded', 'false');
+      dd.appendChild(trigger);
+
+      const menu = document.createElement('div');
+      menu.id = 'lang-menu';
+      menu.className = 'lang-menu';
+      menu.setAttribute('role', 'menu');
+      menu.hidden = true;
+      dd.appendChild(menu);
+
+      const flagSrc = {
+        tr: 'images/flags/4x3/tr.svg',
+        en: 'images/flags/4x3/gb.svg',
+        ja: 'images/flags/4x3/jp.svg',
+        zh: 'images/flags/4x3/cn.svg',
+        es: 'images/flags/4x3/es.svg',
+        it: 'images/flags/4x3/it.svg',
+        fr: 'images/flags/4x3/fr.svg',
+        de: 'images/flags/4x3/de.svg',
+        ru: 'images/flags/4x3/ru.svg',
+        el: 'images/flags/4x3/gr.svg'
+      };
+      const langTitle = { tr: 'Türkçe', en: 'English', ja: '日本語', zh: '中文', es: 'Español', it: 'Italiano', fr: 'Français', de: 'Deutsch', ru: 'Русский', el: 'Ελληνικά' };
+      ['tr','en','ja','zh','es','it','fr','de','ru','el'].forEach(lang => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'lang-option';
+        item.setAttribute('data-lang', lang);
+        item.setAttribute('role', 'menuitemradio');
+        item.setAttribute('aria-checked', 'false');
+        const img = document.createElement('img');
+        img.src = flagSrc[lang];
+        img.alt = '';
+        img.className = 'flag-icon';
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        item.appendChild(img);
+        const span = document.createElement('span');
+        span.textContent = langTitle[lang];
+        item.appendChild(span);
+        item.title = langTitle[lang] || lang.toUpperCase();
+        item.addEventListener('click', async () => {
+          await setLanguage(lang);
+          closeMenu();
+        });
+        menu.appendChild(item);
+      });
+
+      function openMenu() {
+        menu.hidden = false;
+        trigger.setAttribute('aria-expanded', 'true');
+        document.addEventListener('click', onDocClick, { capture: true });
+        document.addEventListener('keydown', onKeyDown);
+      }
+      function closeMenu() {
+        menu.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+        document.removeEventListener('click', onDocClick, { capture: true });
+        document.removeEventListener('keydown', onKeyDown);
+      }
+      function onDocClick(e) {
+        if (!dd.contains(e.target)) closeMenu();
+      }
+      function onKeyDown(e) {
+        if (e.key === 'Escape') {
+          closeMenu();
+          trigger.focus();
+        }
+      }
+      trigger.addEventListener('click', () => {
+        if (menu.hidden) openMenu(); else closeMenu();
+      });
     }
-    btn.addEventListener('click', async () => {
-      const nextLang = currentLang === 'tr' ? 'en' : 'tr';
-      await setLanguage(nextLang);
-    });
+    // Ensure the AI translation note exists next to the group
+    let note = document.getElementById('ai-translation-note');
+    if (!note) {
+      note = document.createElement('span');
+      note.id = 'ai-translation-note';
+      note.className = 'ai-note';
+      note.style.display = 'none';
+      header.appendChild(note);
+    }
   }
 
   const links = pages.map(p => {
@@ -163,6 +300,45 @@
       applyTheme(next);
       applyTranslations();
     });
+  }
+
+  function initShareLink() {
+    const header = document.querySelector('header');
+    if (!header) return;
+    let link = document.getElementById('share-link');
+    if (!link) {
+      link = document.createElement('a');
+      link.id = 'share-link';
+      link.className = 'theme-toggle';
+      const shareUrl = 'https://tolgaokurt.github.io/WebsiteOfTK/';
+      link.href = shareUrl;
+      link.title = 'Share website';
+      link.textContent = 'Share';
+      link.addEventListener('click', async (e) => {
+        e.preventDefault();
+        // Prefer native share on supported (typically mobile) browsers
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: 'WebsiteOfTK', text: 'WebsiteOfTK', url: shareUrl });
+          } catch (_) {
+            // user cancelled or share failed -> fall back to copy
+            try { await navigator.clipboard.writeText(shareUrl); } catch (_) {}
+          }
+          return;
+        }
+        // Desktop fallback: copy to clipboard
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          const prev = link.textContent;
+          link.textContent = 'Copied';
+          setTimeout(() => { link.textContent = prev; }, 1200);
+        } catch (_) {
+          // As a last resort, open the URL
+          window.open(shareUrl, '_blank', 'noopener,noreferrer');
+        }
+      });
+      header.appendChild(link);
+    }
   }
 
   function setActive(name) {
@@ -240,21 +416,50 @@
     });
   });
 
+  function setHintExplanationSuffix() {
+    const suffix = getTranslation('hint_suffix');
+    const styleId = 'hint-after-lang-style';
+    let styleTag = document.getElementById(styleId);
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = styleId;
+      document.head.appendChild(styleTag);
+    }
+    styleTag.textContent = `.hint::after { content: '${suffix}'; }`;
+  }
+
+  const origApplyTranslations = applyTranslations;
+  applyTranslations = function(...args) {
+    origApplyTranslations.apply(this, args);
+    setHintExplanationSuffix();
+  };
+
+  const origSetLanguage = setLanguage;
+  setLanguage = async function(lang, ...args) {
+    await origSetLanguage.apply(this, [lang, ...args]);
+    setHintExplanationSuffix();
+  };
+
   document.addEventListener('DOMContentLoaded', async () => {
     const savedLang = localStorage.getItem('lang');
     const browserLang = navigator.language.split('-')[0];
-    currentLang = savedLang || (['tr', 'en'].includes(browserLang) ? browserLang : 'tr');
+    const supported = ['tr','en','ja','zh','es','it','fr','de','ru','el'];
+    currentLang = savedLang || (supported.includes(browserLang) ? browserLang : 'tr');
 
     await loadLanguage('tr');
-    if (currentLang !== 'tr') {
-        await loadLanguage(currentLang);
+    await loadLanguage('en');
+    // Try to load preferred language if different
+    if (!['tr','en'].includes(currentLang)) {
+      await loadLanguage(currentLang);
     }
 
     document.documentElement.lang = currentLang;
     initThemeToggle();
     initLangToggle();
+    initShareLink();
     strengthenExternalLinks(document);
     applyTranslations(document);
+    setHintExplanationSuffix();
 
     const name = location.hash.replace('#', '') || "anasayfa";
     loadPage(name);
