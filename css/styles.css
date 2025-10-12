@@ -35,7 +35,7 @@ body {
   margin:0 auto;
   padding:28px;
   display:grid;
-  grid-template-columns: 1fr 200px;
+  grid-template-columns: 1fr 400px;
   gap:var(--gap);
   align-items:start;
 }

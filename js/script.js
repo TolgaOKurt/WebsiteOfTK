@@ -5,46 +5,100 @@
   const CACHE = new Map();
 
   // i18n
-  const TRANSLATABLE_PAGES = ['anasayfa', 'iletisim', 'RMBiVD'];
   let currentLang = 'tr';
-  let translations = {};
+  const translations = {}; // Cache for loaded translation files: { "en_anasayfa": { ... } }
+  const translationCache = new Map(); // Cache for fetch promises
 
   const pages = [
     { name: "anasayfa", textKey: "nav_anasayfa", file: "html/anasayfa.html", icon: "images/tk_16x16.png" },
-    { name: "RMBiVD", textKey: "nav_RMBiVD", file: "html/RMBiVD.html", icon: "images/mavitop_16x16.png" },
-    { name: "PSPp", text: "PSP+", file: "html/Pspp.html", icon: "images/pulumsu_16x16.png" },
-    { name: "Agac", text: "Ağaç", file: "html/Agac.html", icon: "images/agacimsi_16x16.png" },
-    { name: "USD", text: "USD", file: "html/UcgenSayDong.html", icon: "images/cizgiler_16x16.png" },
-    { name: "SSMT", text: "SSMT", file: "html/SSMT.html", icon: "images/tank_16x16.png" },
-    { name: "MH", text: "MontyHall", file: "html/MontyHall.html", icon: "images/kapı_16x16.png" },
-    { name: "FT", text: "FormulTahmin", file: "html/FormTahm.html", icon: "images/253_16x16.png" },
+    {
+      name: "matematik-ve-kod",
+      textKey: "Matematik_ve_Kodlama",
+      icon: "images/matevekod_16x16.png",
+      children: [
+        { name: "RMBiVD", textKey: "nav_RMBiVD", file: "html/RMBiVD.html", icon: "images/mavitop_16x16.png" },
+        { name: "PSPp", text: "PSP+", file: "html/Pspp.html", icon: "images/pulumsu_16x16.png" },
+        { name: "Agac", text: "Ağaç", file: "html/Agac.html", icon: "images/agacimsi_16x16.png" },
+        { name: "USD", text: "USD", file: "html/UcgenSayDong.html", icon: "images/cizgiler_16x16.png" },
+        { name: "SSMT", text: "SSMT", file: "html/SSMT.html", icon: "images/tank_16x16.png" },
+        { name: "MH", text: "MontyHall", file: "html/MontyHall.html", icon: "images/kapı_16x16.png" },
+        { name: "FT", text: "FormulTahmin", file: "html/FormTahm.html", icon: "images/253_16x16.png" },
+      ]
+    },
     { name: "iletisim", textKey: "nav_iletisim", file: "html/iletisim.html", icon: "images/hi_16x16.png" }
   ];
 
-  async function loadLanguage(lang) {
-    if (translations[lang]) return true;
+  async function fetchTranslationFile(path) {
+    if (translationCache.has(path)) {
+      return translationCache.get(path);
+    }
     try {
-      const res = await fetch(`lang/${lang}.json`);
-      if (!res.ok) throw new Error(`Language file for ${lang} not found`);
-      translations[lang] = await res.json();
-      return true;
+      const res = await fetch(path);
+      if (!res.ok) {
+        translationCache.set(path, null);
+        return null;
+      }
+      const data = await res.json();
+      translationCache.set(path, data);
+      return data;
     } catch (err) {
-      console.error(err);
-      if (lang !== 'tr') await loadLanguage('tr');
-      return false;
+      console.error(`Failed to fetch translation file: ${path}`, err);
+      translationCache.set(path, null);
+      return null;
     }
   }
 
-  function getTranslation(key, lang = currentLang) {
-    // Try current language, then English, then Turkish, then key
-    return (translations[lang] && translations[lang][key])
-      || (translations['en'] && translations['en'][key])
-      || (translations['tr'] && translations['tr'][key])
+  function getPageInfo(pageName) {
+    function find(p, name) {
+      for (const item of p) {
+        if (item.name === name) return item;
+        if (item.children) {
+          const found = find(item.children, name);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+    return find(pages, pageName);
+  }
+
+  function getTranslationPageName(pageName) {
+    const pageInfo = getPageInfo(pageName);
+    if (!pageInfo || pageInfo.children) {
+        return pageName;
+    }
+    return pageInfo.file.split('/')[1].replace('.html', '');
+  }
+
+  async function loadLanguageForPage(lang, pageName) {
+    const translationPageName = getTranslationPageName(pageName);
+    const langKey = `${lang}_${translationPageName}`;
+    if (translations[langKey]) return;
+
+    const sharedTr = await fetchTranslationFile(`lang/shared/${lang}.json`) || {};
+    const pageTr = await fetchTranslationFile(`lang/${translationPageName}/${lang}.json`) || {};
+    
+    translations[langKey] = { ...sharedTr, ...pageTr };
+  }
+
+  function getTranslation(key) {
+    const pageName = location.hash.replace('#', '') || "anasayfa";
+    const translationPageName = getTranslationPageName(pageName);
+
+    const currentLangKey = `${currentLang}_${translationPageName}`;
+    const enKey = `en_${translationPageName}`;
+    const trKey = `tr_${translationPageName}`;
+
+    return (translations[currentLangKey] && translations[currentLangKey][key])
+      || (translations[enKey] && translations[enKey][key])
+      || (translations[trKey] && translations[trKey][key])
       || key;
   }
 
+  let links = [];
+
   function applyTranslations(scope = document) {
-    scope.querySelectorAll('[data-i18n]:not([data-i18n-processed])').forEach(el => {
+    scope.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.dataset.i18n;
       const translation = getTranslation(key);
       if (el.hasAttribute('data-i18n-allow-html')) {
@@ -53,19 +107,20 @@
       } else {
         el.textContent = translation;
       }
-      el.setAttribute('data-i18n-processed', 'true');
     });
-    scope.querySelectorAll('[data-i18n-processed]').forEach(el => el.removeAttribute('data-i18n-processed'));
     scope.querySelectorAll('[data-i18n-title]').forEach(el => el.title = getTranslation(el.dataset.i18nTitle));
     scope.querySelectorAll('[data-i18n-alt]').forEach(el => el.alt = getTranslation(el.dataset.i18nAlt));
     scope.querySelectorAll('[data-i18n-aria-label]').forEach(el => el.setAttribute('aria-label', getTranslation(el.dataset.i18nAriaLabel)));
     scope.querySelectorAll('[data-i18n-content]').forEach(el => el.content = getTranslation(el.dataset.i18nContent));
 
     links.forEach(({ el, page }) => {
-      const text = page.textKey ? getTranslation(page.textKey) : page.text;
-      const icon = el.querySelector('.nav-icon');
-      el.textContent = text + ' ';
-      if (icon) el.appendChild(icon);
+        const text = page.textKey ? getTranslation(page.textKey) : page.text;
+        const icon = el.querySelector('.nav-icon');
+        const textContainer = el.matches('.nav-folder-toggle') ? el.querySelector('span') : el;
+        if (textContainer) {
+            textContainer.textContent = text + ' ';
+            if (icon) textContainer.appendChild(icon);
+        }
     });
 
     const themeBtn = document.getElementById('theme-toggle');
@@ -74,18 +129,8 @@
       themeBtn.textContent = getTranslation(theme === 'dark' ? 'theme_dark' : 'theme_light');
     }
 
-    // Update language dropdown active state and trigger label
     const flagSrc = {
-      tr: 'images/flags/4x3/tr.svg',
-      en: 'images/flags/4x3/gb.svg',
-      ja: 'images/flags/4x3/jp.svg',
-      zh: 'images/flags/4x3/cn.svg',
-      es: 'images/flags/4x3/es.svg',
-      it: 'images/flags/4x3/it.svg',
-      fr: 'images/flags/4x3/fr.svg',
-      de: 'images/flags/4x3/de.svg',
-      ru: 'images/flags/4x3/ru.svg',
-      el: 'images/flags/4x3/gr.svg'
+      tr: 'images/flags/4x3/tr.svg', en: 'images/flags/4x3/gb.svg', ja: 'images/flags/4x3/jp.svg', zh: 'images/flags/4x3/cn.svg', es: 'images/flags/4x3/es.svg', it: 'images/flags/4x3/it.svg', fr: 'images/flags/4x3/fr.svg', de: 'images/flags/4x3/de.svg', ru: 'images/flags/4x3/ru.svg', el: 'images/flags/4x3/gr.svg'
     };
     const trigger = document.getElementById('lang-trigger');
     if (trigger) {
@@ -107,7 +152,6 @@
       });
     }
 
-    // Show a tiny note next to the language button when non-TR is active
     const aiNote = document.getElementById('ai-translation-note');
     if (aiNote) {
       if (currentLang !== 'tr') {
@@ -121,27 +165,22 @@
   }
 
   async function setLanguage(lang) {
-    const ok = await loadLanguage(lang);
-    if (!ok && lang !== 'tr') {
-      // keep current language if requested one is unavailable yet
-      return;
-    }
-    currentLang = ok ? lang : 'tr';
+    currentLang = lang;
+    const name = location.hash.replace('#', '') || "anasayfa";
+    
+    await loadLanguageForPage(currentLang, name);
+    if (currentLang !== 'en') await loadLanguageForPage('en', name);
+    if (currentLang !== 'tr') await loadLanguageForPage('tr', name);
+
     localStorage.setItem('lang', currentLang);
     document.documentElement.lang = currentLang;
+    
     applyTranslations(document);
-    const name = location.hash.replace('#', '') || "anasayfa";
-    await loadPage(name);
   }
 
   function initLangToggle() {
     const header = document.querySelector('header');
     if (!header) return;
-    // Remove old group if exists
-    const oldGroup = document.getElementById('lang-toggle-group');
-    if (oldGroup) oldGroup.remove();
-
-    // Create dropdown container
     let dd = document.getElementById('lang-dropdown');
     if (!dd) {
       dd = document.createElement('div');
@@ -165,16 +204,7 @@
       dd.appendChild(menu);
 
       const flagSrc = {
-        tr: 'images/flags/4x3/tr.svg',
-        en: 'images/flags/4x3/gb.svg',
-        ja: 'images/flags/4x3/jp.svg',
-        zh: 'images/flags/4x3/cn.svg',
-        es: 'images/flags/4x3/es.svg',
-        it: 'images/flags/4x3/it.svg',
-        fr: 'images/flags/4x3/fr.svg',
-        de: 'images/flags/4x3/de.svg',
-        ru: 'images/flags/4x3/ru.svg',
-        el: 'images/flags/4x3/gr.svg'
+        tr: 'images/flags/4x3/tr.svg', en: 'images/flags/4x3/gb.svg', ja: 'images/flags/4x3/jp.svg', zh: 'images/flags/4x3/cn.svg', es: 'images/flags/4x3/es.svg', it: 'images/flags/4x3/it.svg', fr: 'images/flags/4x3/fr.svg', de: 'images/flags/4x3/de.svg', ru: 'images/flags/4x3/ru.svg', el: 'images/flags/4x3/gr.svg'
       };
       const langTitle = { tr: 'Türkçe', en: 'English', ja: '日本語', zh: '中文', es: 'Español', it: 'Italiano', fr: 'Français', de: 'Deutsch', ru: 'Русский', el: 'Ελληνικά' };
       ['tr','en','ja','zh','es','it','fr','de','ru','el'].forEach(lang => {
@@ -202,32 +232,12 @@
         menu.appendChild(item);
       });
 
-      function openMenu() {
-        menu.hidden = false;
-        trigger.setAttribute('aria-expanded', 'true');
-        document.addEventListener('click', onDocClick, { capture: true });
-        document.addEventListener('keydown', onKeyDown);
-      }
-      function closeMenu() {
-        menu.hidden = true;
-        trigger.setAttribute('aria-expanded', 'false');
-        document.removeEventListener('click', onDocClick, { capture: true });
-        document.removeEventListener('keydown', onKeyDown);
-      }
-      function onDocClick(e) {
-        if (!dd.contains(e.target)) closeMenu();
-      }
-      function onKeyDown(e) {
-        if (e.key === 'Escape') {
-          closeMenu();
-          trigger.focus();
-        }
-      }
-      trigger.addEventListener('click', () => {
-        if (menu.hidden) openMenu(); else closeMenu();
-      });
+      function openMenu() { menu.hidden = false; trigger.setAttribute('aria-expanded', 'true'); document.addEventListener('click', onDocClick, { capture: true }); document.addEventListener('keydown', onKeyDown); }
+      function closeMenu() { menu.hidden = true; trigger.setAttribute('aria-expanded', 'false'); document.removeEventListener('click', onDocClick, { capture: true }); document.removeEventListener('keydown', onKeyDown); }
+      function onDocClick(e) { if (!dd.contains(e.target)) closeMenu(); }
+      function onKeyDown(e) { if (e.key === 'Escape') { closeMenu(); trigger.focus(); } }
+      trigger.addEventListener('click', () => { if (menu.hidden) openMenu(); else closeMenu(); });
     }
-    // Ensure the AI translation note exists next to the group
     let note = document.getElementById('ai-translation-note');
     if (!note) {
       note = document.createElement('span');
@@ -238,22 +248,129 @@
     }
   }
 
-  const links = pages.map(p => {
-    const a = document.createElement("a");
-    a.href = `#${p.name}`;
-    a.className = "link";
-    if (p.icon) {
-      const img = document.createElement('img');
-      img.src = p.icon;
-      img.alt = "";
-      img.loading = 'lazy';
-      img.decoding = 'async';
-      img.className = 'nav-icon';
-      a.appendChild(img);
+  function buildNav(pages, container) {
+    pages.forEach(p => {
+      if (p.children) {
+        const folder = document.createElement('div');
+        folder.className = 'nav-folder';
+
+        const toggle = document.createElement('button');
+        toggle.className = 'nav-folder-toggle link';
+        toggle.setAttribute('aria-expanded', 'false');
+        
+        const toggleText = document.createElement('span');
+        toggle.appendChild(toggleText);
+
+        if (p.icon) {
+          const img = document.createElement('img');
+          img.src = p.icon;
+          img.alt = "";
+          img.loading = 'lazy';
+          img.decoding = 'async';
+          img.className = 'nav-icon';
+          toggle.appendChild(img);
+        }
+
+        const content = document.createElement('div');
+        content.className = 'nav-folder-content';
+        content.hidden = true;
+
+        toggle.addEventListener('click', () => {
+            const isExpanded = content.hidden = !content.hidden;
+            toggle.setAttribute('aria-expanded', !isExpanded);
+        });
+
+        folder.appendChild(toggle);
+        folder.appendChild(content);
+        container.appendChild(folder);
+        links.push({ el: toggle, page: p, isFolder: true, contentEl: content });
+        buildNav(p.children, content);
+      } else {
+        const a = document.createElement("a");
+        a.href = `#${p.name}`;
+        a.className = "link";
+        if (p.icon) {
+          const img = document.createElement('img');
+          img.src = p.icon;
+          img.alt = "";
+          img.loading = 'lazy';
+          img.decoding = 'async';
+          img.className = 'nav-icon';
+          a.appendChild(img);
+        }
+        a.addEventListener('click', e => { e.preventDefault(); location.hash = a.getAttribute('href'); });
+        container.appendChild(a);
+        links.push({ el: a, page: p });
+      }
+    });
+  }
+
+  function injectNavStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .nav-folder-content {
+            padding-left: 20px;
+            overflow: hidden;
+            max-height: 1000px; /* Set a large max-height for transition */
+            transition: max-height 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .nav-folder-content[hidden] {
+            max-height: 0;
+        }
+        .nav-folder-toggle {
+            background: none; 
+            border: none; 
+            padding: 0; 
+            font: inherit; 
+            cursor: pointer; 
+            text-align: left; 
+            width: 100%;
+        }
+        .nav-folder-toggle::after {
+            content: ' ▼';
+            font-size: 0.8em;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+        .nav-folder-toggle[aria-expanded="true"]::after {
+            transform: rotate(180deg);
+        }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function injectHeaderStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .header-title-link {
+            color: inherit;
+            text-decoration: none;
+            font-weight: inherit;
+            cursor: pointer;
+        }
+        .header-title-link:hover {
+            color: inherit;
+            text-decoration: none;
+        }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function initHeaderLink() {
+    const h1 = document.querySelector('header h1');
+    if (h1 && h1.textContent === 'Tolga Kurt') {
+        h1.innerHTML = ''; // Clear the h1
+        const link = document.createElement('a');
+        link.href = '#anasayfa';
+        link.textContent = 'Tolga Kurt';
+        link.className = 'header-title-link';
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            location.hash = link.getAttribute('href');
+        });
+        h1.appendChild(link);
     }
-    navEl.appendChild(a);
-    return { el: a, page: p };
-  });
+  }
 
   function strengthenExternalLinks(scope = document) {
     const currentHost = location.host;
@@ -316,25 +433,15 @@
       link.textContent = 'Share';
       link.addEventListener('click', async (e) => {
         e.preventDefault();
-        // Prefer native share on supported (typically mobile) browsers
         if (navigator.share) {
+          try { await navigator.share({ title: 'WebsiteOfTK', text: 'WebsiteOfTK', url: shareUrl }); } catch (_) { try { await navigator.clipboard.writeText(shareUrl); } catch (_) {} }
+        } else {
           try {
-            await navigator.share({ title: 'WebsiteOfTK', text: 'WebsiteOfTK', url: shareUrl });
-          } catch (_) {
-            // user cancelled or share failed -> fall back to copy
-            try { await navigator.clipboard.writeText(shareUrl); } catch (_) {}
-          }
-          return;
-        }
-        // Desktop fallback: copy to clipboard
-        try {
-          await navigator.clipboard.writeText(shareUrl);
-          const prev = link.textContent;
-          link.textContent = 'Copied';
-          setTimeout(() => { link.textContent = prev; }, 1200);
-        } catch (_) {
-          // As a last resort, open the URL
-          window.open(shareUrl, '_blank', 'noopener,noreferrer');
+            await navigator.clipboard.writeText(shareUrl);
+            const prev = link.textContent;
+            link.textContent = 'Copied';
+            setTimeout(() => { link.textContent = prev; }, 1200);
+          } catch (_) { window.open(shareUrl, '_blank', 'noopener,noreferrer'); }
         }
       });
       header.appendChild(link);
@@ -342,34 +449,49 @@
   }
 
   function setActive(name) {
-    links.forEach(({ el, page }) => {
-      const active = page.name === name;
-      el.classList.toggle('active', active);
-      if (active) el.setAttribute('aria-current', 'page');
-      else el.removeAttribute('aria-current');
+    links.forEach(({ el, page, isFolder, contentEl }) => {
+        if (isFolder) {
+            const isChildActive = page.children.some(child => child.name === name);
+            if (isChildActive) {
+                contentEl.hidden = false;
+                el.setAttribute('aria-expanded', 'true');
+            }
+            el.classList.remove('active');
+        } else {
+            const isActive = page.name === name;
+            el.classList.toggle('active', isActive);
+            if (isActive) {
+                el.setAttribute('aria-current', 'page');
+            } else {
+                el.removeAttribute('aria-current');
+            }
+        }
     });
   }
 
   async function loadPage(name) {
-    const page = pages.find(p => p.name === name) || pages[0];
-    setActive(page.name);
+    const pageInfo = getPageInfo(name) || getPageInfo('anasayfa');
+    setActive(name);
+
+    await loadLanguageForPage(currentLang, name);
+    if (currentLang !== 'en') await loadLanguageForPage('en', name);
+    if (currentLang !== 'tr') await loadLanguageForPage('tr', name);
+    
     contentEl.classList.remove('show');
     contentEl.classList.add('fade');
     try {
       let html;
-      if (CACHE.has(page.file)) {
-        html = CACHE.get(page.file);
+      if (CACHE.has(pageInfo.file)) {
+        html = CACHE.get(pageInfo.file);
       } else {
-        const res = await fetch(page.file);
+        const res = await fetch(pageInfo.file);
         if (!res.ok) throw new Error('Yükleme hatası: ' + res.status);
         html = await res.text();
-        CACHE.set(page.file, html);
+        CACHE.set(pageInfo.file, html);
       }
       contentEl.innerHTML = html;
 
-      if (TRANSLATABLE_PAGES.includes(page.name)) {
-        applyTranslations(contentEl);
-      }
+      applyTranslations(document);
 
       contentEl.querySelectorAll('img[data-src]').forEach(img => {
         const filename = img.dataset.src.split('/').pop();
@@ -377,12 +499,9 @@
         img.loading = img.getAttribute('loading') || 'lazy';
         img.decoding = img.getAttribute('decoding') || 'async';
       });
-      contentEl.querySelectorAll('img:not([loading])').forEach(img => {
-        img.loading = 'lazy';
-        img.decoding = 'async';
-      });
+      contentEl.querySelectorAll('img:not([loading])').forEach(img => { img.loading = 'lazy'; img.decoding = 'async'; });
       strengthenExternalLinks(contentEl);
-      const pageTitle = page.textKey ? getTranslation(page.textKey) : page.text;
+      const pageTitle = pageInfo.textKey ? getTranslation(pageInfo.textKey) : pageInfo.text;
       document.title = pageTitle + ' — Tolga Kurt';
       contentEl.querySelectorAll('.hint[title], .info[title]').forEach((el, idx) => {
         const text = el.getAttribute('title');
@@ -405,15 +524,8 @@
   }
 
   window.addEventListener('hashchange', () => {
-    const name = location.hash.replace('#', '');
+    const name = location.hash.replace('#', '') || "anasayfa";
     loadPage(name);
-  });
-
-  links.forEach(({ el }) => {
-    el.addEventListener('click', e => {
-      e.preventDefault();
-      location.hash = el.getAttribute('href');
-    });
   });
 
   function setHintExplanationSuffix() {
@@ -441,27 +553,23 @@
   };
 
   document.addEventListener('DOMContentLoaded', async () => {
+    injectNavStyles();
+    injectHeaderStyles();
+    buildNav(pages, navEl);
+    initHeaderLink();
+
     const savedLang = localStorage.getItem('lang');
     const browserLang = navigator.language.split('-')[0];
     const supported = ['tr','en','ja','zh','es','it','fr','de','ru','el'];
     currentLang = savedLang || (supported.includes(browserLang) ? browserLang : 'tr');
-
-    await loadLanguage('tr');
-    await loadLanguage('en');
-    // Try to load preferred language if different
-    if (!['tr','en'].includes(currentLang)) {
-      await loadLanguage(currentLang);
-    }
-
     document.documentElement.lang = currentLang;
+
     initThemeToggle();
     initLangToggle();
     initShareLink();
     strengthenExternalLinks(document);
-    applyTranslations(document);
-    setHintExplanationSuffix();
 
     const name = location.hash.replace('#', '') || "anasayfa";
-    loadPage(name);
+    await loadPage(name);
   });
 })();

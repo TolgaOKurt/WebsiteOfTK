@@ -1,0 +1,15 @@
+{
+  "meta_description": "Projets, écrits et expériences de Tolga Kurt. Site personnel d'un étudiant en ingénierie mathématique.",
+  "og_description": "Site personnel où je partage mes projets et ce que j'ai appris.",
+  "twitter_description": "Site personnel où je partage mes projets et ce que j'ai appris.",
+  "header_subtitle": "Je partage ce que je fais.<br><a href=\"https://github.com/TolgaOKurt\" target=\"_blank\" rel=\"noopener noreferrer\">Github</a> / <a href=\"https://linkedin.com/in/tolgaokurt\" target=\"_blank\" rel=\"noopener noreferrer\">LinkedIn</a>",
+  "site_navigation": "Navigation du site",
+  "nav_anasayfa": "Accueil",
+  "nav_iletisim": "Contact",
+  "nav_RMBiVD": "RMBiVD",
+  "ai_note": "Traduit par IA",
+  "hint_suffix": "c.-à-d.",
+  "theme_dark": "🌙 Sombre",
+  "theme_light": "☀️ Clair",
+  "Matematik_ve_Kodlama": "Matematique et Programmation"
+}
