@@ -130,7 +130,7 @@
     }
 
     const flagSrc = {
-      tr: 'images/flags/4x3/tr.svg', en: 'images/flags/4x3/gb.svg', ja: 'images/flags/4x3/jp.svg', zh: 'images/flags/4x3/cn.svg', es: 'images/flags/4x3/es.svg', it: 'images/flags/4x3/it.svg', fr: 'images/flags/4x3/fr.svg', de: 'images/flags/4x3/de.svg', ru: 'images/flags/4x3/ru.svg', el: 'images/flags/4x3/gr.svg'
+      tr: 'images/flags/4x3/tr.svg', en: 'images/flags/4x3/gb.svg', ja: 'images/flags/4x3/jp.svg', zh: 'images/flags/4x3/cn.svg', es: 'images/flags/4x3/es.svg', it: 'images/flags/4x3/it.svg', fr: 'images/flags/4x3/fr.svg', de: 'images/flags/4x3/de.svg', ru: 'images/flags/4x3/ru.svg', el: 'images/flags/4x3/gr.svg', ko: 'images/flags/4x3/kr.svg'
     };
     const trigger = document.getElementById('lang-trigger');
     if (trigger) {
@@ -204,10 +204,10 @@
       dd.appendChild(menu);
 
       const flagSrc = {
-        tr: 'images/flags/4x3/tr.svg', en: 'images/flags/4x3/gb.svg', ja: 'images/flags/4x3/jp.svg', zh: 'images/flags/4x3/cn.svg', es: 'images/flags/4x3/es.svg', it: 'images/flags/4x3/it.svg', fr: 'images/flags/4x3/fr.svg', de: 'images/flags/4x3/de.svg', ru: 'images/flags/4x3/ru.svg', el: 'images/flags/4x3/gr.svg'
+        tr: 'images/flags/4x3/tr.svg', en: 'images/flags/4x3/gb.svg', ja: 'images/flags/4x3/jp.svg', zh: 'images/flags/4x3/cn.svg', es: 'images/flags/4x3/es.svg', it: 'images/flags/4x3/it.svg', fr: 'images/flags/4x3/fr.svg', de: 'images/flags/4x3/de.svg', ru: 'images/flags/4x3/ru.svg', el: 'images/flags/4x3/gr.svg', ko: 'images/flags/4x3/kr.svg'
       };
-      const langTitle = { tr: 'Türkçe', en: 'English', ja: '日本語', zh: '中文', es: 'Español', it: 'Italiano', fr: 'Français', de: 'Deutsch', ru: 'Русский', el: 'Ελληνικά' };
-      ['tr','en','ja','zh','es','it','fr','de','ru','el'].forEach(lang => {
+      const langTitle = { tr: 'Türkçe', en: 'English', ja: '日本語', zh: '中文', es: 'Español', it: 'Italiano', fr: 'Français', de: 'Deutsch', ru: 'Русский', el: 'Ελληνικά', ko: '한국어' };
+      ['tr','en','ja','zh','es','it','fr','de','ru','el','ko'].forEach(lang => {
         const item = document.createElement('button');
         item.type = 'button';
         item.className = 'lang-option';
@@ -560,7 +560,7 @@
 
     const savedLang = localStorage.getItem('lang');
     const browserLang = navigator.language.split('-')[0];
-    const supported = ['tr','en','ja','zh','es','it','fr','de','ru','el'];
+    const supported = ['tr','en','ja','zh','es','it','fr','de','ru','el','ko'];
     currentLang = savedLang || (supported.includes(browserLang) ? browserLang : 'tr');
     document.documentElement.lang = currentLang;
 
