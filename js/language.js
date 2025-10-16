@@ -2,6 +2,12 @@ window.language = (() => {
   let currentLang = 'tr';
   const translations = {}; // Cache for loaded translation files: { "en_anasayfa": { ... } }
   const translationCache = new Map(); // Cache for fetch promises
+  const flagSrc = {
+    tr: 'images/flags/4x3/tr.svg', en: 'images/flags/4x3/gb.svg', ja: 'images/flags/4x3/jp.svg',
+    zh: 'images/flags/4x3/cn.svg', es: 'images/flags/4x3/es.svg', it: 'images/flags/4x3/it.svg',
+    fr: 'images/flags/4x3/fr.svg', de: 'images/flags/4x3/de.svg', ru: 'images/flags/4x3/ru.svg',
+    el: 'images/flags/4x3/gr.svg', ko: 'images/flags/4x3/kr.svg'
+  };
 
   async function fetchTranslationFile(path) {
     if (translationCache.has(path)) {
@@ -56,6 +62,18 @@ window.language = (() => {
       || key;
   }
 
+  function setHintExplanationSuffix() {
+    const suffix = getTranslation('hint_suffix');
+    const styleId = 'hint-after-lang-style';
+    let styleTag = document.getElementById(styleId);
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = styleId;
+      document.head.appendChild(styleTag);
+    }
+    styleTag.textContent = `.hint::after { content: '${suffix}'; }`;
+  }
+
   function applyTranslations(scope = document) {
     scope.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.dataset.i18n;
@@ -88,9 +106,6 @@ window.language = (() => {
       themeBtn.textContent = getTranslation(theme === 'dark' ? 'theme_dark' : 'theme_light');
     }
 
-    const flagSrc = {
-      tr: 'images/flags/4x3/tr.svg', en: 'images/flags/4x3/gb.svg', ja: 'images/flags/4x3/jp.svg', zh: 'images/flags/4x3/cn.svg', es: 'images/flags/4x3/es.svg', it: 'images/flags/4x3/it.svg', fr: 'images/flags/4x3/fr.svg', de: 'images/flags/4x3/de.svg', ru: 'images/flags/4x3/ru.svg', el: 'images/flags/4x3/gr.svg', ko: 'images/flags/4x3/kr.svg'
-    };
     const trigger = document.getElementById('lang-trigger');
     if (trigger) {
       trigger.textContent = '';
@@ -121,6 +136,7 @@ window.language = (() => {
         aiNote.style.display = 'none';
       }
     }
+    setHintExplanationSuffix();
   }
 
   async function setLanguage(lang) {
@@ -162,11 +178,8 @@ window.language = (() => {
       menu.hidden = true;
       dd.appendChild(menu);
 
-      const flagSrc = {
-        tr: 'images/flags/4x3/tr.svg', en: 'images/flags/4x3/gb.svg', ja: 'images/flags/4x3/jp.svg', zh: 'images/flags/4x3/cn.svg', es: 'images/flags/4x3/es.svg', it: 'images/flags/4x3/it.svg', fr: 'images/flags/4x3/fr.svg', de: 'images/flags/4x3/de.svg', ru: 'images/flags/4x3/ru.svg', el: 'images/flags/4x3/gr.svg', ko: 'images/flags/4x3/kr.svg'
-      };
       const langTitle = { tr: 'Türkçe', en: 'English', ja: '日本語', zh: '中文', es: 'Español', it: 'Italiano', fr: 'Français', de: 'Deutsch', ru: 'Русский', el: 'Ελληνικά', ko: '한국어' };
-      ['tr','en','ja','zh','es','it','fr','de','ru','el','ko'].forEach(lang => {
+      Object.keys(flagSrc).forEach(lang => {
         const item = document.createElement('button');
         item.type = 'button';
         item.className = 'lang-option';
@@ -206,30 +219,6 @@ window.language = (() => {
       header.appendChild(note);
     }
   }
-
-  function setHintExplanationSuffix() {
-    const suffix = getTranslation('hint_suffix');
-    const styleId = 'hint-after-lang-style';
-    let styleTag = document.getElementById(styleId);
-    if (!styleTag) {
-      styleTag = document.createElement('style');
-      styleTag.id = styleId;
-      document.head.appendChild(styleTag);
-    }
-    styleTag.textContent = `.hint::after { content: '${suffix}'; }`;
-  }
-
-  const origApplyTranslations = applyTranslations;
-  applyTranslations = function(...args) {
-    origApplyTranslations.apply(this, args);
-    setHintExplanationSuffix();
-  };
-
-  const origSetLanguage = setLanguage;
-  setLanguage = async function(lang, ...args) {
-    await origSetLanguage.apply(this, [lang, ...args]);
-    setHintExplanationSuffix();
-  };
   
   function getCurrentLang() {
     return currentLang;
