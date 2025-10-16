@@ -23,7 +23,21 @@
         { name: "SSMT", text: "WIP SSMT", file: "html/SSMT.html", icon: "images/tank_16x16.png" },
         { name: "MH", text: "WIP MontyHall", file: "html/MontyHall.html", icon: "images/kapı_16x16.png" },
         { name: "FT", text: "WIP FormulTahmin", file: "html/FormTahm.html", icon: "images/253_16x16.png" },
+		{
+          name: "algoritmalar",
+          textKey: "nav_algoritmalar",
+          icon: "images/algoritmalar_16x16.png",
+          children: []
+        }
       ]
+    },
+    {
+        name: "gundelik-hayat",
+        textKey: "nav_gundelik_hayat",
+        icon: "images/gundelik_16x16.png",
+        children: [
+            { name: "meyve_suyu", textKey: "nav_meyve_suyu", file: "html/Gündelik Hayat/meyve_suyu.html", icon: "images/meyvesuyu_16x16.png" }
+        ]
     },
     { name: "iletisim", textKey: "nav_iletisim", file: "html/iletisim.html", icon: "images/hi_16x16.png" }
   ];
